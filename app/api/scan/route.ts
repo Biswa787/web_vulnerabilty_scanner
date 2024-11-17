@@ -14,19 +14,46 @@ export async function POST(req: Request) {
   }
 
   try {
-    const results = await performScan(url)
-    return NextResponse.json(results)
-  } catch (err) {
-    console.error('Scan error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    const results = await performScan(url);
+    return NextResponse.json(results);
+  } catch (err: unknown) {
+    console.error('Scan error:', err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
 
-async function performScan(url: string) {
-  const parsedUrl = parse(url)
+// async function performScan(url: string) {
+//   const parsedUrl = parse(url)
   
+//   if (!parsedUrl.hostname) {
+//     throw new Error('Invalid URL format')
+//   }
+
+//   const options = {
+//     hostname: parsedUrl.hostname,
+//     port: 443,
+//     path: parsedUrl.path || '/',
+//     method: 'GET',
+//     rejectUnauthorized: false,
+//     timeout: 10000,
+//     headers: {
+//       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+//       'Accept': '*/*',
+//       'Connection': 'close'
+//     },
+//     agent: new https.Agent({
+//       keepAlive: false,
+//       maxSockets: 1,
+//       rejectUnauthorized: false,
+//       timeout: 10000
+//     })
+//   }
+
+async function performScan(url: string): Promise<Record<string, unknown>> {
+  const parsedUrl = parse(url);
+
   if (!parsedUrl.hostname) {
-    throw new Error('Invalid URL format')
+    throw new Error('Invalid URL format');
   }
 
   const options = {
@@ -37,17 +64,9 @@ async function performScan(url: string) {
     rejectUnauthorized: false,
     timeout: 10000,
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept': '*/*',
-      'Connection': 'close'
+      'User-Agent': 'Mozilla/5.0',
     },
-    agent: new https.Agent({
-      keepAlive: false,
-      maxSockets: 1,
-      rejectUnauthorized: false,
-      timeout: 10000
-    })
-  }
+  };
 
   return new Promise((resolve, reject) => {
     let responseData = ''
