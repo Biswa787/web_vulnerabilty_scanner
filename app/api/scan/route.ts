@@ -16,10 +16,9 @@ export async function POST(req: Request) {
   try {
     const results = await performScan(url)
     return NextResponse.json(results)
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Scan failed'
-    console.error('Scan error:', error)
-    return NextResponse.json({ error: errorMessage }, { status: 500 })
+  } catch (err) {
+    console.error('Scan error:', err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
 
