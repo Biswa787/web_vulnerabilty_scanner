@@ -2,24 +2,20 @@
     "version": 2,
     "builds": [
       {
-        "src": "package.json",
-        "use": "@vercel/static-build"
+        "src": "next.config.js",
+        "use": "@vercel/next"
       }
     ],
     "routes": [
       {
         "src": "/api/(.*)",
         "dest": "/api/$1"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
       }
     ],
-    "env": {
-      "NODE_ENV": "production",
-      //"API_URL": "http://localhost" // Replace with your actual API URL
-    },
-    "functions": {
-      "api/**/*.ts": {
-        "memory": 1024,
-        "maxDuration": 10
-      }
-    }
+    "framework": "nextjs"
   }
+  
