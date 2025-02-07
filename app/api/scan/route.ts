@@ -117,7 +117,7 @@ async function performScan(url: string): Promise<Record<string, unknown>> {
 
           // Calculate overall score
           const overallScore = calculateOverallScore(results);
-          results.overallScore = overallScore; // Add overall score to results
+          (results as any).overallScore = overallScore; // Add overall score to results
 
           cleanup()
           resolve(results)
