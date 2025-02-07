@@ -169,7 +169,7 @@ function checkSSLCertificate(socket: TLSSocket) {
       validFrom: cert.valid_from,
       validTo: cert.valid_to,
       serialNumber: cert.serialNumber,
-      signatureAlgorithm: cert.signatureAlgorithm,
+      signatureAlgorithm: (cert as any).signatureAlgorithm,
       fingerprint: cert.fingerprint,
     };
 
@@ -241,7 +241,7 @@ function extractIssuer(cert: DetailedPeerCertificate): string {
   
   return cert.issuer.O || // Organization
          cert.issuer.CN || // Common Name
-         cert.issuer.organizationName ||
+         (cert as any).issuer.organizationName ||
          Object.values(cert.issuer).join(', ') ||
          'Unknown';
 }
@@ -251,7 +251,7 @@ function extractSubject(cert: DetailedPeerCertificate): string {
   
   return cert.subject.CN || // Common Name
          cert.subject.O || // Organization
-         cert.subject.commonName ||
+         (cert as any).subject.commonName ||
          Object.values(cert.subject).join(', ') ||
          'Unknown';
 }
@@ -273,7 +273,7 @@ function hasValidChain(cert: DetailedPeerCertificate): boolean {
 
 function getPublicKeyInfo(cert: DetailedPeerCertificate): string {
   const bits = (cert as any).bits;
-  const type = cert.publicKey?.type || 'Unknown';
+  const type = (cert as any).pubkey?.type || 'Unknown';
   
   if (!bits) return 'Unknown';
   return `${bits}-bit ${type}`;
@@ -1555,3 +1555,4 @@ function calculateOverallScore(results: any): number {
     const totalScore = validScores.reduce((acc, score) => acc + score, 0);
     return validScores.length > 0 ? totalScore / validScores.length : 0; // Return 0 if no valid scores
 }
+
