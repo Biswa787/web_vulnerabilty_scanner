@@ -11,12 +11,10 @@ import Particles from "react-tsparticles"
 import { loadSlim } from "tsparticles-slim"
 import type { Container, Engine } from "tsparticles-engine"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, Area } from 'recharts'
-import { motion } from "framer-motion";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { Progress } from "./components/ui/progress";
-import LearningModule from "./components/LearningModule";
 
 interface ScanResults {
   sslCertificate: {
@@ -348,8 +346,8 @@ export default function VulnerabilityScanner() {
     },
     { 
       name: 'XSS', 
-      value: results.xss.technicalDetails?.vulnerabilityScore 
-        ? Math.max(0, 100 - results.xss.technicalDetails.vulnerabilityScore)
+      value: (results as any).xss.technicalDetails?.vulnerabilityScore 
+        ? Math.max(0, 100 - (results as any).xss.technicalDetails.vulnerabilityScore)
         : (results.xss.status === 'secure' ? 100 : 0),
       color: results.xss.status === 'secure' ? '#10B981' : '#EF4444'
     },
@@ -445,11 +443,12 @@ export default function VulnerabilityScanner() {
 
     // Capture the chart
     const chartElement = document.querySelector('.chart-container');
-    if (chartElement) {
+    if (chartElement instanceof HTMLElement) {
       const canvas = await html2canvas(chartElement);
       const chartImage = canvas.toDataURL('image/png');
       pdf.addImage(chartImage, 'PNG', 14, 50, 180, 100);
     }
+
 
     // Add SSL Certificate details
     pdf.addPage();
@@ -507,8 +506,8 @@ export default function VulnerabilityScanner() {
       ['Details', results.xss.details],
     ];
 
-    if (results.xss.technicalDetails) {
-      const tech = results.xss.technicalDetails;
+    if ((results as any).xss.technicalDetails) {
+      const tech = (results as any).xss.technicalDetails;
       xssData.push(['Vulnerability Score', `${tech.vulnerabilityScore}/100`]);
       
       if (tech.dangerousScripts > 0) {
@@ -541,12 +540,12 @@ export default function VulnerabilityScanner() {
     });
 
     // Add detailed findings if they exist
-    if (results.xss.technicalDetails?.findings?.length > 0) {
+    if ((results as any).xss.technicalDetails?.findings?.length > 0) {
       pdf.addPage();
       pdf.setFontSize(16);
       pdf.text('Detailed XSS Findings', 14, 15);
 
-      const findingsData = results.xss.technicalDetails.findings.map((finding, index) => [
+      const findingsData = (results as any).xss.technicalDetails.findings.map((finding, index) => [
         `Issue ${index + 1}`,
         finding
       ]);
